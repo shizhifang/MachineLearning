@@ -12,7 +12,8 @@ from operator import itemgetter
 #    Iris Setosa（山鸢尾）、Iris Versicolour（变色鸢尾）和Iris Virginica（维吉尼亚鸢尾 
 # =============================================================================
 
-#该算法目的是通过这四个特征中的一个以分辨种类，即，如果某一植物的特征feature_index 的离散值为valu
+#该算法目的是通过这四个特征中的一个以分辨种类，
+# 即，如果某一植物的特征feature_index 的离散值为value
 #那么该植物最有可能是most_frequent_class，错误率为error
 # =============================================================================
 # X为离散后的数据
@@ -20,19 +21,19 @@ from operator import itemgetter
 # feature_index为以第几个特征为标准
 # value为特征值
 # =============================================================================
-def train_feature_value(X,y_true,feature_index,value):
-	class_counts = defaultdict(int)
-	for sample,y in zip(X,y_true):
-		if sample[feature_index] == value:
-			class_counts[y]+=1
-	sorted_class_counts = sorted(class_counts.items(),key=itemgetter(1),reverse=True)
-	print("sorted_class_counts",sorted_class_counts,sep='=')
-	most_frequent_class = sorted_class_counts[0][0]
-	print("most_frequent_class",most_frequent_class,sep='=')
-	incorrect_predictions = [class_count for class_vlue,class_count in class_counts.items() if class_vlue != most_frequent_class]
-	print("incorrect_predictions",incorrect_predictions)
-	error = sum(incorrect_predictions)
-	return most_frequent_class,error
+def train_feature_value(x_means,y_true,feature_index,value):
+    class_counts = defaultdict(int)     #字典predictors，用作预测器
+    for sample,y in zip(x_means,y_true):
+      if(sample[feature_index] == value):
+          class_counts[y]+=1
+    sorted_class_counts = sorted(class_counts.items(),key=itemgetter(1),reverse=True)
+    print("sorted_class_counts",sorted_class_counts,sep='=')
+    most_frequent_class = sorted_class_counts[0][0]
+    print("属性索引={0}时，最频繁的类别是：{1},正确个数：{2}".format(feature_index,most_frequent_class,sorted_class_counts[0][1]),sep='=')
+    incorrect_predictions = [class_count for class_vlue,class_count in class_counts.items() if class_vlue != most_frequent_class]
+    error = sum(incorrect_predictions)
+    print("错误率：{0}".format(error),incorrect_predictions)
+    return most_frequent_class,error
 
 if __name__ == '__main__':
    dataset = load_iris()
@@ -40,7 +41,6 @@ if __name__ == '__main__':
    Y = dataset.target #每株植物的种类，有3个种类
    attribute_means = X.mean(axis=0)  #求4个特征的平均值
    #当该值大于平局值时为1，小于平局值时为0，完成原始数据的离散化
-   X_d = np.array(X >= attribute_means, dtype='int') 
-   print(X_d)
-   train_feature_value(X_d,Y,0,1)   #1=Iris Versicolour
+   x_means = np.array(X >= attribute_means, dtype='int') 
+   train_feature_value(x_means,Y,1,1)   #1=Iris Versicolour
 
